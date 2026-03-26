@@ -1,7 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, Put, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  BadRequestException,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { StudentsService } from './students.service';
-import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Controller('students')
 export class StudentsController {
@@ -25,7 +33,9 @@ export class StudentsController {
   @Get('search')
   search(@Query('q') q: string) {
     if (!q || q.trim() === '') {
-      throw new BadRequestException('Le paramètre de recherche "q" est obligatoire');
+      throw new BadRequestException(
+        'Le paramètre de recherche "q" est obligatoire',
+      );
     }
     return this.studentsService.search(q);
   }
@@ -33,22 +43,24 @@ export class StudentsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     const numericId = parseInt(id, 10);
-    if (isNaN(numericId)) throw new BadRequestException("L'ID doit être un nombre valide");
+    if (isNaN(numericId))
+      throw new BadRequestException("L'ID doit être un nombre valide");
     return this.studentsService.findOne(numericId);
   }
 
   @Put(':id')
   update(@Param('id') id: string, @Body() data: any) {
     const numericId = parseInt(id, 10);
-    if (isNaN(numericId)) throw new BadRequestException("L'ID doit être un nombre valide");
+    if (isNaN(numericId))
+      throw new BadRequestException("L'ID doit être un nombre valide");
     return this.studentsService.update(numericId, data);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     const numericId = parseInt(id, 10);
-    if (isNaN(numericId)) throw new BadRequestException("L'ID doit être un nombre valide");
+    if (isNaN(numericId))
+      throw new BadRequestException("L'ID doit être un nombre valide");
     return this.studentsService.remove(numericId);
   }
-  
 }

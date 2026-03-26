@@ -26,9 +26,19 @@ export default tseslint.config(
   },
   {
     rules: {
+      // RÈGLES EXIGÉES PAR LE TP
+      '@typescript-eslint/no-unused-vars': ['error', { "argsIgnorePattern": "^_" }], // Erreur si variable inutilisée
+      'no-console': 'error', // Erreur si console.log (à supprimer avant de push)
+
+      // ASSOUPLISSEMENT DU LINTER SUR LE "ANY"
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn',
+      '@typescript-eslint/no-unsafe-argument': 'off',
       "prettier/prettier": ["error", { endOfLine: "auto" }],
     },
   },
