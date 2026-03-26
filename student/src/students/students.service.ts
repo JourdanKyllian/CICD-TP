@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 
-// 1. Le Modèle de données strict demandé dans la consigne
+// Modèle de données
 export interface Student {
   id: number;
   firstName: string;
@@ -12,16 +12,16 @@ export interface Student {
 
 @Injectable()
 export class StudentsService {
-  // PAS DE BASE DE DONNÉES : Stockage en mémoire
+  // Stockage en mémoire
   private students: Student[] = [];
   private currentId = 1;
 
   constructor() {
-    // On appelle le reset au démarrage pour avoir nos 5 étudiants
+    // Appelle du reset au démarrage pour avoir nos 5 étudiants
     this.resetData(); 
   }
 
-  // 2. La fonction de reset exigée (cruciale pour les tests plus tard)
+  // La fonction de reset exigée
   resetData() {
     this.currentId = 6;
     this.students = [
@@ -33,8 +33,37 @@ export class StudentsService {
     ];
   }
 
-  // --- Fonctions CRUD (On mettra la logique de l'Étape 4 ici juste après) ---
-  create(createStudentDto: any) { return 'This action adds a new student'; }
+  // Fonctions CRUD + LOGIQUE DE VALIDATION
+  private validatePayload(data: any, currentStudentId?: number) {
+    if (!data.firstName || !data.lastName || !data.email || data.grade === undefined || !data.field) {
+      throw new BadRequestException('Tous les champs sont obligatoires');
+    }
+    if (data.firstName.length < 2 || data.lastName.length < 2) {
+      throw new BadRequestException('Prénom et nom : min 2 caractères');
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      throw new BadRequestException('Format email invalide');
+    }
+    if (data.grade < 0 || data.grade > 20) {
+      throw new BadRequestException('La note doit être entre 0 et 20');
+    }
+    const validFields = ['informatique', 'mathématiques', 'physique', 'chimie'];
+    if (!validFields.includes(data.field)) {
+      throw new BadRequestException('Filière non autorisée');
+    }
+    const emailExists = this.students.find(s => s.email === data.email && s.id !== currentStudentId);
+    if (emailExists) {
+      throw new ConflictException('Cet email est déjà pris');
+    }
+  }
+
+  create(data: any) {
+    this.validatePayload(data);
+    const newStudent = { ...data, id: this.currentId++ };
+    this.students.push(newStudent);
+    return newStudent;
+  }
   findAll() {
     return this.students;
   }
