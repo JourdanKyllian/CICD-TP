@@ -21,8 +21,8 @@ export class StudentsController {
   }
 
   @Get()
-  findAll() {
-    return this.studentsService.findAll();
+  findAll(@Query() query: any) {
+    return this.studentsService.findAll(query);
   }
 
   @Get('stats')

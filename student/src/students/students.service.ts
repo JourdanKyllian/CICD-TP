@@ -112,8 +112,32 @@ export class StudentsService {
     this.students.push(newStudent);
     return newStudent;
   }
-  findAll() {
-    return this.students;
+
+  findAll(query: { page?: string; limit?: string; sort?: string; order?: string }) {
+    let results = [...this.students];
+
+    // Tri
+    if (query.sort) {
+      const sortKey = query.sort; // On crée une constante locale
+      const order = query.order?.toLowerCase() === 'desc' ? -1 : 1;
+
+      results.sort((a, b) => {
+        // On utilise sortKey et on dit à TS que c'est une clé valide
+        // @ts-ignore (ou utiliser 'as any' si le linter hurle trop)
+        if (a[sortKey] < b[sortKey]) return -1 * order;
+        // @ts-ignore
+        if (a[sortKey] > b[sortKey]) return 1 * order;
+        return 0;
+      });
+    }
+
+    // Pagination
+    const page = parseInt(query.page || '1');
+    const limit = parseInt(query.limit || '10');
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    return results.slice(start, end);
   }
 
   findOne(id: number) {
