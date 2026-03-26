@@ -113,19 +113,22 @@ export class StudentsService {
     return newStudent;
   }
 
-  findAll(query: { page?: string; limit?: string; sort?: string; order?: string }) {
-    let results = [...this.students];
+  findAll(query: {
+    page?: string;
+    limit?: string;
+    sort?: string;
+    order?: string;
+  }) {
+    const results = [...this.students];
 
     // Tri
     if (query.sort) {
-      const sortKey = query.sort; // On crée une constante locale
+      const sortKey = query.sort;
       const order = query.order?.toLowerCase() === 'desc' ? -1 : 1;
 
-      results.sort((a, b) => {
-        // On utilise sortKey et on dit à TS que c'est une clé valide
-        // @ts-ignore (ou utiliser 'as any' si le linter hurle trop)
+      results.sort((a: any, b: any) => {
+        // En passant a et b en 'any' ici, on évite les erreurs d'indexation
         if (a[sortKey] < b[sortKey]) return -1 * order;
-        // @ts-ignore
         if (a[sortKey] > b[sortKey]) return 1 * order;
         return 0;
       });

@@ -137,5 +137,50 @@ describe('Students API (e2e)', () => {
         .expect(200);
       expect(res.body[0].firstName).toBe('Marie');
     });
+
+    it('16. GET /students?sort=grade&order=desc doit renvoyer Marie Curie en premier', async () => {
+      const res = await request(app.getHttpServer()).get(
+        '/students?sort=grade&order=desc',
+      );
+      expect(res.body[0].firstName).toBe('Marie');
+    });
+
+    it('17. GET /students?limit=2 doit renvoyer uniquement 2 étudiants', async () => {
+      const res = await request(app.getHttpServer()).get('/students?limit=2');
+      expect(res.body.length).toBe(2);
+    });
+
+    it('18. POST avec note négative doit renvoyer 400', () => {
+      return request(app.getHttpServer())
+        .post('/students')
+        .send({
+          firstName: 'A',
+          lastName: 'B',
+          email: 'a@b.fr',
+          grade: -5,
+          field: 'info',
+        })
+        .expect(400);
+    });
+
+    it('19. GET /students/search avec caractères spéciaux doit gérer proprement', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/students/search?q=!!!')
+        .expect(200);
+      expect(res.body.length).toBe(0);
+    });
+
+    it('20. POST avec un email invalide doit échouer', () => {
+      return request(app.getHttpServer())
+        .post('/students')
+        .send({
+          firstName: 'A',
+          lastName: 'B',
+          email: 'pas-un-email',
+          grade: 10,
+          field: 'info',
+        })
+        .expect(400);
+    });
   });
 });
