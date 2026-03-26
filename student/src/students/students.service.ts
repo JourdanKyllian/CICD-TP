@@ -88,4 +88,30 @@ export class StudentsService {
     this.students.splice(index, 1);
     return { message: `Étudiant ${id} supprimé avec succès` };
   }
+
+  // Fonction de statistiques
+  getStats() {
+    const totalStudents = this.students.length;
+    if (totalStudents === 0) return { totalStudents: 0, averageGrade: 0, studentsByField: {}, bestStudent: null };
+
+    const sumGrades = this.students.reduce((acc, s) => acc + s.grade, 0);
+    const averageGrade = parseFloat((sumGrades / totalStudents).toFixed(2));
+
+    const studentsByField = this.students.reduce((acc, s) => {
+      acc[s.field] = (acc[s.field] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const bestStudent = [...this.students].sort((a, b) => b.grade - a.grade)[0].grade;
+
+    return { totalStudents, averageGrade, studentsByField, bestStudent };
+  }
+
+  search(q: string) {
+    const lowerQ = q.toLowerCase();
+    return this.students.filter(s => 
+      s.firstName.toLowerCase().includes(lowerQ) || 
+      s.lastName.toLowerCase().includes(lowerQ)
+    );
+  }
 }
