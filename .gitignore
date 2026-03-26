@@ -1,0 +1,15 @@
+# Dépendances
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build NestJS
+dist/
+
+# Fichiers d'environnement (Sécurité)
+.env
+.env.test
+
+# Fichiers OS
+.DS_Store
+Thumbs.db
