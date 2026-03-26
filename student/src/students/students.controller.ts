@@ -17,6 +17,19 @@ export class StudentsController {
     return this.studentsService.findAll();
   }
 
+  @Get('stats')
+  getStats() {
+    return this.studentsService.getStats();
+  }
+
+  @Get('search')
+  search(@Query('q') q: string) {
+    if (!q || q.trim() === '') {
+      throw new BadRequestException('Le paramètre de recherche "q" est obligatoire');
+    }
+    return this.studentsService.search(q);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     const numericId = parseInt(id, 10);
@@ -37,17 +50,5 @@ export class StudentsController {
     if (isNaN(numericId)) throw new BadRequestException("L'ID doit être un nombre valide");
     return this.studentsService.remove(numericId);
   }
-
-  @Get('stats')
-  getStats() {
-    return this.studentsService.getStats();
-  }
-
-  @Get('search')
-  search(@Query('q') q: string) {
-    if (!q || q.trim() === '') {
-      throw new BadRequestException('Le paramètre de recherche "q" est obligatoire');
-    }
-    return this.studentsService.search(q);
-  }
+  
 }
