@@ -73,6 +73,19 @@ export class StudentsService {
     if (!student) throw new NotFoundException(`Étudiant ${id} non trouvé`);
     return student;
   }
-  update(id: number, updateStudentDto: any) { return `This action updates a #${id} student`; }
-  remove(id: number) { return `This action removes a #${id} student`; }
+  update(id: number, data: any) {
+    const index = this.students.findIndex(s => s.id === id);
+    if (index === -1) throw new NotFoundException(`Étudiant ${id} non trouvé`);
+    
+    this.validatePayload(data, id);
+    this.students[index] = { ...data, id };
+    return this.students[index];
+  }
+
+  remove(id: number) {
+    const index = this.students.findIndex(s => s.id === id);
+    if (index === -1) throw new NotFoundException(`Étudiant ${id} non trouvé`);
+    this.students.splice(index, 1);
+    return { message: `Étudiant ${id} supprimé avec succès` };
+  }
 }
