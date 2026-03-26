@@ -113,7 +113,7 @@ export class StudentsService {
     return newStudent;
   }
   findAll() {
-    return this.students;
+    return [];
   }
 
   findOne(id: number) {
