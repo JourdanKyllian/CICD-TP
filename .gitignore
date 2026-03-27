@@ -13,3 +13,6 @@ dist/
 # Fichiers OS
 .DS_Store
 Thumbs.db
+
+# Rapport de couverture de tests
+coverage/
