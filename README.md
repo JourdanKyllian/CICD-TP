@@ -1,10 +1,10 @@
-# 🎓 Students API - CI/CD Project
+# Students API - CI/CD Project
 
 ![CI Status](https://github.com/JourdanKyllian/CICD-TP/actions/workflows/ci.yml/badge.svg)
 
 Une API RESTful construite avec **NestJS** pour gérer une liste d'étudiants. Ce projet a été conçu dans le cadre d'un TP sur l'intégration continue (CI) et met l'accent sur la qualité du code, les tests automatisés et l'auto-documentation.
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
 - **CRUD complet** : Création, lecture, modification et suppression d'étudiants (stockage en mémoire).
 - **Fonctionnalités avancées** :
@@ -19,7 +19,7 @@ Une API RESTful construite avec **NestJS** pour gérer une liste d'étudiants. C
 
 ---
 
-## 🚀 Démarrage Rapide
+## Démarrage Rapide
 
 ### 1. Installation
 Assurez-vous d'avoir Node.js installé (version 20 recommandée).
