@@ -4,14 +4,29 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
 
 // Modèle de données
-export interface Student {
+export class Student {
+  @ApiProperty({ example: 1 })
   id: number;
+
+  @ApiProperty({ example: 'Jean' })
   firstName: string;
+
+  @ApiProperty({ example: 'Dupont' })
   lastName: string;
+
+  @ApiProperty({ example: 'jean@test.fr' })
   email: string;
+
+  @ApiProperty({ example: 15 })
   grade: number;
+
+  @ApiProperty({
+    example: 'informatique',
+    enum: ['informatique', 'mathématiques', 'physique', 'chimie'],
+  })
   field: 'informatique' | 'mathématiques' | 'physique' | 'chimie';
 }
 
