@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,7 +19,7 @@ import {
 import { StudentsService, Student } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 
-@ApiTags('students') // Groupe toutes les routes sous l'onglet "students"
+@ApiTags('students')
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
@@ -73,14 +74,14 @@ export class StudentsController {
     return this.studentsService.findAll(query);
   }
 
-  @Get('stats') // Placé AVANT :id pour éviter les conflits de route
+  @Get('stats')
   @ApiOperation({ summary: 'Obtenir les statistiques globales' })
   @ApiResponse({ status: 200, description: 'Statistiques calculées' })
   getStats() {
     return this.studentsService.getStats();
   }
 
-  @Get('search') // Placé AVANT :id
+  @Get('search')
   @ApiOperation({ summary: 'Rechercher des étudiants par nom ou prénom' })
   @ApiQuery({ name: 'q', required: true, description: 'Terme de recherche' })
   @ApiResponse({ status: 200, type: [Student] })
@@ -93,7 +94,7 @@ export class StudentsController {
   @ApiParam({ name: 'id', example: 1 })
   @ApiResponse({ status: 200, type: Student })
   @ApiResponse({ status: 404, description: 'Étudiant non trouvé' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: string) {
     return this.studentsService.findOne(+id);
   }
 
