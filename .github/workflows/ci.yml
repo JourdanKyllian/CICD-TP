@@ -1,50 +1,54 @@
-name: CI Students API
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-test:
+    name: Build & Test
     runs-on: ubuntu-latest
-
-    strategy:
-      # Test sur Node 20 et Node 22
-      matrix:
-        node-version: [20.x, 22.x]
 
     defaults:
       run:
-        working-directory: ./student # Emplacement du code NestJS
+        working-directory: ./student
 
     steps:
-      - name: 1. Checkout (Récupérer le code)
+      - name: 1. Checkout du code
         uses: actions/checkout@v4
 
-      - name: 2. Setup (Configurer Node.js ${{ matrix.node-version }})
+      - name: 2. Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20'
           cache: 'npm'
           cache-dependency-path: './student/package-lock.json'
 
-      - name: 3. Install (Installer les dépendances)
+      - name: 3. Installation des dépendances
         run: npm ci
 
-      - name: 4. Lint (Vérifier la qualité du code)
+      - name: 4. Vérification du code (lint)
         run: npm run lint
 
-      - name: 5. Test (Lancer les 15 tests E2E)
+      - name: 5. Tests E2E (Tes 20 tests)
         run: npm run test:e2e
 
-      - name: 🧪 Run Tests with Coverage
-        run: npm run test:cov # Commande par défaut de NestJS
+      - name: 6. Rapport de couverture
+        run: npm run test:cov
 
-      - name: 📊 Upload Coverage Report
+      - name: 7. Build du projet (Indispensable !)
+        run: npm run build
+
+      - name: 8. Upload Coverage Artifact
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report
           path: student/coverage/
-      
