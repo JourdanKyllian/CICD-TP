@@ -182,5 +182,52 @@ describe('Students API (e2e)', () => {
         })
         .expect(400);
     });
+
+    // =========================================================
+    // TESTS AVANCÉS : PAGINATION, TRI ET RECHERCHE
+    // =========================================================
+    describe('Recherche Avancée, Tri et Pagination', () => {
+      
+      it('21. Pagination : GET /students?page=2&limit=2 doit renvoyer Alan et Ada', async () => {
+        const res = await request(app.getHttpServer())
+          .get('/students?page=2&limit=2')
+          .expect(200);
+        expect(res.body.length).toBe(2);
+        expect(res.body[0].firstName).toBe('Alan'); // ID 3
+        expect(res.body[1].firstName).toBe('Ada');  // ID 4
+      });
+
+      it('22. Tri Ascendant : GET /students?sort=grade&order=asc doit renvoyer Walter en premier (note 12)', async () => {
+        const res = await request(app.getHttpServer())
+          .get('/students?sort=grade&order=asc')
+          .expect(200);
+        expect(res.body[0].firstName).toBe('Walter');
+      });
+
+      it('23. Combo : GET /students?sort=grade&order=desc&limit=2 doit renvoyer le Top 2 (Marie et Alan)', async () => {
+        const res = await request(app.getHttpServer())
+          .get('/students?sort=grade&order=desc&limit=2')
+          .expect(200);
+        expect(res.body.length).toBe(2);
+        expect(res.body[0].firstName).toBe('Marie'); // 20
+        expect(res.body[1].firstName).toBe('Alan');  // 19
+      });
+
+      it('24. Recherche insensible à la casse : GET /students/search?q=LOVELACE', async () => {
+        const res = await request(app.getHttpServer())
+          .get('/students/search?q=LOVELACE')
+          .expect(200);
+        expect(res.body.length).toBe(1);
+        expect(res.body[0].firstName).toBe('Ada');
+      });
+
+      it('25. Pagination Hors Limite : GET /students?page=10&limit=10 doit renvoyer un tableau vide', async () => {
+        const res = await request(app.getHttpServer())
+          .get('/students?page=10&limit=10')
+          .expect(200);
+        expect(res.body).toEqual([]);
+      });
+      
+    });
   });
 });
