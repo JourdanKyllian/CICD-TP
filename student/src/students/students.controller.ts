@@ -18,6 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { StudentsService, Student } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { PaginationQueryDto } from './dto/pagination-query.dto'; // 👈 Import du nouveau DTO
 
 @ApiTags('students')
 @Controller('students')
@@ -26,11 +27,7 @@ export class StudentsController {
 
   @Post()
   @ApiOperation({ summary: 'Créer un nouvel étudiant' })
-  @ApiResponse({
-    status: 201,
-    description: 'Étudiant créé avec succès',
-    type: Student,
-  })
+  @ApiResponse({ status: 201, description: 'Étudiant créé avec succès', type: Student })
   @ApiResponse({ status: 400, description: 'Données invalides' })
   @ApiResponse({ status: 409, description: 'Email déjà utilisé' })
   create(@Body() createStudentDto: CreateStudentDto) {
@@ -38,39 +35,9 @@ export class StudentsController {
   }
 
   @Get()
-  @ApiOperation({
-    summary: 'Récupérer la liste des étudiants (avec tri et pagination)',
-  })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    example: '1',
-    description: 'Numéro de la page',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    example: '10',
-    description: "Nombre d'éléments par page",
-  })
-  @ApiQuery({
-    name: 'sort',
-    required: false,
-    example: 'grade',
-    description: 'Champ pour le tri (grade, firstName...)',
-  })
-  @ApiQuery({
-    name: 'order',
-    required: false,
-    enum: ['asc', 'desc'],
-    description: 'Sens du tri',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Liste des étudiants retournée',
-    type: [Student],
-  })
-  findAll(@Query() query: any) {
+  @ApiOperation({ summary: 'Récupérer la liste des étudiants (avec tri et pagination)' })
+  @ApiResponse({ status: 200, description: 'Liste des étudiants retournée', type: [Student] })
+  findAll(@Query() query: PaginationQueryDto) { // 👈 Fini le "any", place au DTO !
     return this.studentsService.findAll(query);
   }
 
@@ -94,23 +61,26 @@ export class StudentsController {
   @ApiParam({ name: 'id', example: 1 })
   @ApiResponse({ status: 200, type: Student })
   @ApiResponse({ status: 404, description: 'Étudiant non trouvé' })
-  findOne(@Param('id', ParseIntPipe) id: string) {
-    return this.studentsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) { // 👈 Typé en number
+    return this.studentsService.findOne(id); // 👈 Plus de +id
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Modifier un étudiant existant' })
   @ApiParam({ name: 'id', example: 1 })
   @ApiResponse({ status: 200, type: Student })
-  update(@Param('id') id: string, @Body() updateStudentDto: CreateStudentDto) {
-    return this.studentsService.update(+id, updateStudentDto);
+  update(
+    @Param('id', ParseIntPipe) id: number, // 👈 Ajout du ParseIntPipe
+    @Body() updateStudentDto: CreateStudentDto,
+  ) {
+    return this.studentsService.update(id, updateStudentDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Supprimer un étudiant' })
   @ApiParam({ name: 'id', example: 1 })
   @ApiResponse({ status: 200, description: 'Message de confirmation' })
-  remove(@Param('id') id: string) {
-    return this.studentsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) { // 👈 Ajout du ParseIntPipe
+    return this.studentsService.remove(id);
   }
 }
